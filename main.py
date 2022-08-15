@@ -10,6 +10,7 @@ app.add_middleware(CORSMiddleware, allow_origins=['*', 'http://localhost:8000', 
 from memlog import MemoryLogRepository
 
 mlIns = MemoryLogRepository()
+mlIns.addAll('smartlog', ['started'])
 
 @app.get('/')
 def welcome():
@@ -18,6 +19,9 @@ def welcome():
 @app.post('/log/{appid}')
 async def post_log(appid, request: Request):
     batch = await request.json()
+    print('add %d entries' % len(batch))
+    print(batch[0])
+    print('...')
     mlIns.addAll(appid, batch)
     return 'ok'
 
