@@ -10,21 +10,37 @@ app.add_middleware(CORSMiddleware, allow_origins=['*'], allow_methods=['*'], all
 from memlog import MemoryLogRepository
 
 mlIns = MemoryLogRepository()
-mlIns.addAll('smartlog', [{'type': 'info', 'msg': 'started'}])
 
 @app.get('/')
 def welcome():
     return 'Welcome to SmartLog Server'
 
 @app.post('/log/{appid}')
-async def post_log(appid, batch: List[dict] = Body()):
-    print('add %d entries' % len(batch))
-    assert isinstance(batch, list)
-    mlIns.addAll(appid, batch)
+async def post_log(appid, batch: List[dict]):
+    mlIns.addBatchOfLogs(appid, batch)
     return 'ok'
 
+@app.post('/workflows/{appid}')
+async def add_workflows(appid, batch: List[dict]):
+    mlIns.addBatchOfWorkflows(appid, batch)
+    print(json.dumps(mlIns.getAppWorkflows(appid)))
+    return 'ok'
+
+@app.post('/issues/{appid}')
+async def add_issues(appid, batch: List[dict] = Body()):
+    mlIns.addBatchOfIssues(appid, batch)
+    print(json.dumps(mlIns.getAppIssues(appid)))
+    return 'ok'
 
 @app.get('/log/{appid}')
 def get_log(appid):
     return mlIns.getAppLog(appid)
+
+@app.get('/issues/{appid}')
+def get_issues(appid):
+    return mlIns.getAppIssues(appid)
+        
+@app.get('/workflows/{appid}')
+def get_workflows(appid):
+    return mlIns.getAppWorkflows(appid)
         
