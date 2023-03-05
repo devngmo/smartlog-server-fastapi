@@ -1,1 +1,1 @@
-python -m uvicorn main:app --port 24505 --host 192.168.197.1
+python -m uvicorn main:app --port 24505 --host 192.168.1.137
