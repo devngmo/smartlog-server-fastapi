@@ -5,11 +5,12 @@ from typing import List
 def appendIfNotExists(src:List[dict], dest:List[dict]):
     for s in src:
         d = [x for x in dest if x['id'] == s['id']]
-        if d != None:
+        if len(d) == 1:
             continue
         else:
             print(f"add {json.dumps(s)}")
             dest += [s]
+    return dest
 class MemoryLogRepository():
     def __init__(self) -> None:
         self.appMap = {}
@@ -27,14 +28,13 @@ class MemoryLogRepository():
 
     def addBatchOfWorkflows(self, appid, workflows: List[dict]):
         if appid in self.appMap:
-            appendIfNotExists(workflows, self.appMap[appid]['workflows'])
+            self.appMap[appid]['workflows'] = appendIfNotExists(workflows, self.appMap[appid]['workflows'])
         else:
-            print(workflows)
             self.appMap[appid] = { 'entries': [], 'workflows': workflows, 'issues': [] }
 
     def addBatchOfIssues(self, appid, issues: List[dict]):
         if appid in self.appMap:
-            appendIfNotExists(issues, self.appMap[appid]['issues'])
+            self.appMap[appid]['issues'] = appendIfNotExists(issues, self.appMap[appid]['issues'])
         else:
             self.appMap[appid] = { 'entries': [], 'workflows': [], 'issues': issues }
 

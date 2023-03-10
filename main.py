@@ -22,7 +22,10 @@ async def post_log(appid, batch: List[dict]):
 
 @app.post('/workflows/{appid}')
 async def add_workflows(appid, batch: List[dict]):
+    print('upload workflows:')
+    print(batch)
     mlIns.addBatchOfWorkflows(appid, batch)
+    print('saved workflows:')
     print(json.dumps(mlIns.getAppWorkflows(appid)))
     return 'ok'
 
