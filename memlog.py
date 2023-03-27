@@ -39,6 +39,10 @@ class MemoryLogRepository():
             self.appMap[appid] = { 'entries': [], 'workflows': [], 'issues': issues }
 
 
+    def clearAppLog(self, appid):
+        if appid in self.appMap:
+            self.appMap[appid]['entries'] = []
+
     def getAppLog(self, appid):
         if appid in self.appMap:
             return self.appMap[appid]['entries']

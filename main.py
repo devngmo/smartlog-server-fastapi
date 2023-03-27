@@ -39,6 +39,10 @@ async def add_issues(appid, batch: List[dict] = Body()):
 def get_log(appid):
     return mlIns.getAppLog(appid)
 
+@app.delete('/log/{appid}')
+def clear_app_log(appid):
+    return mlIns.clearAppLog(appid)
+
 @app.get('/issues/{appid}')
 def get_issues(appid):
     return mlIns.getAppIssues(appid)
