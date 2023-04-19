@@ -1,4 +1,4 @@
-import string
+import string, uvicorn, socket
 from typing import Union, List
 from dotenv import set_key
 from fastapi import Body, FastAPI, Request
@@ -50,4 +50,19 @@ def get_issues(appid):
 @app.get('/workflows/{appid}')
 def get_workflows(appid):
     return mlIns.getAppWorkflows(appid)
-        
+
+
+def extract_ip():
+    st = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:       
+        st.connect(('10.255.255.255', 1))
+        IP = st.getsockname()[0]
+    except Exception:
+        IP = '127.0.0.1'
+    finally:
+        st.close()
+    return IP
+
+
+if __name__ == '__main__':
+    uvicorn.run("main:app", host=extract_ip(), port=24505)
