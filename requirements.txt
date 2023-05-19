@@ -1,0 +1,3 @@
+python-devenv
+fastapi
+uvicorn
