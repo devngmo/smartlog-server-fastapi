@@ -51,6 +51,14 @@ def get_issues(appid):
 def get_workflows(appid):
     return mlIns.getAppWorkflows(appid)
 
+@app.get('/workflow/{appid}/{workflowid}')
+def get_flows_by_workflow(appid: str, workflowid: str):
+    return mlIns.filterFlow(appid, workflowid)
+
+@app.get('/workflow/{appid}/{workflowid}/{wiid}/logs')
+def get_flow_logs(appid: str, workflowid: str, wiid: str):
+    return mlIns.getFlowLogs(appid, workflowid, wiid)
+
 
 def extract_ip():
     st = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
