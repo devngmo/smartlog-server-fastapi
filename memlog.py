@@ -51,15 +51,20 @@ class MemoryLogRepository():
                 wfi = self.getWorkflowInstance(appid, wfid, wiid)
                 if wfi == None:
                     print(f'[Workflow:{wfid}] add instance wiid:{wiid}')
-                    self.addWorkflowInstance(appid, item)
+                    wfi = {'error': None, 'time': item['time'], 'endTime': None, 'wfid': wfid, 'wiid': wiid}
+                    self.addWorkflowInstance(appid, wfi)
                 else:
-                    error = item['error']
+                    error = None
+                    if 'error' in item:
+                        error = item['error']
+
                     endTime = item['time']
                     print(f"[Workflow:{wfid}] update instance wiid:{wiid} error={error} endTime={endTime}")
-                    wfi['error'] = error
+                    if error != None and ('error' not in wfi or wfi['error'] == None):
+                        wfi['error'] = error
                     wfi['endTime'] = endTime
-            else:
-                self.addLogEntry(appid, item)
+            
+            self.addLogEntry(appid, item)
 
     def addBatchOfWorkflows(self, appid, workflows: List[dict]):
         if appid in self.appMap:
@@ -105,9 +110,13 @@ class MemoryLogRepository():
         if appid in self.appMap:
             wfi = self.getWorkflowInstance(appid, workflowid, wiid)
             if wfi != None:
+                wfiStart = wfi['time']
+                wfiEnd = wfi['endTime']
                 for ins in self.appMap[appid]['entries']:
                     if workflowid in ins['tags']:
-                        ls += [ins]
+                        if ins['time'] >= wfiStart:
+                            if wfiEnd == None or ins['time'] <= wfiEnd:
+                                ls += [ins]
                     elif includeNonFlowLogs:
                         if ins['time'] >= wfi['time']:
                             if wfi['endTime'] == None:
